@@ -12,6 +12,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd
     http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
+    <!--property文件加载-->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -34,7 +35,7 @@
         <!-- 释放连接的扫描间隔（毫秒） -->
         <property name="timeBetweenEvictionRunsMillis" value="30000"/>
         <!-- 连接最小空闲时间 -->
-        <property name="minEvictableIdleTimeMillis" value="1800000"/>
+        <property name="minEvictableIdleTimeMillis" value="180000"/>
         <!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->
         <property name="softMinEvictableIdleTimeMillis" value="10000"/>
         <!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
@@ -80,7 +81,7 @@
 
     <!--自定义key的生成策略-->
     <bean id="classAndMethodKeyGenerator" class="com.song.cache.cache.keyGenerator.ClassAndMethodKeyGenerator"/>
-    <!--开启缓存的注解-->
+    <!--开启缓存的注解,并修改主键生成策略-->
     <cache:annotation-driven cache-manager="cacheManager" key-generator="classAndMethodKeyGenerator"/>
     <!--cacheManager,可以配置多个缓存-->
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">

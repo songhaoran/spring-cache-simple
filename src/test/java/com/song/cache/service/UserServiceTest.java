@@ -29,4 +29,9 @@ public class UserServiceTest {
         User jia = userService.getUser("jia");
         System.out.println("jia:"+jia.toString());
     }
+
+    @Test
+    public void testSave() {
+        userService.save();
+    }
 }
