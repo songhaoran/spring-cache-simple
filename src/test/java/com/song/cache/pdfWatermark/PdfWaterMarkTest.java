@@ -19,11 +19,8 @@ import com.song.cache.pdfWatermark.bean.ImgWatermark;
 import com.song.cache.pdfWatermark.bean.PdfWatermark;
 import com.song.cache.pdfWatermark.bean.WordWatermark;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.PaddingScheme;
 import org.junit.Test;
-import sun.net.www.protocol.https.HttpsURLConnectionImpl;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
