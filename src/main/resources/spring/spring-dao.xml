@@ -48,7 +48,7 @@
     <!--扫描dao-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!--扫描多个包使用英文逗号间隔-->
-        <property name="basePackage" value="com.song.dao"/>
+        <property name="basePackage" value="com.song.cache.dao"/>
     </bean>
 
     <!--事务管理器-->
