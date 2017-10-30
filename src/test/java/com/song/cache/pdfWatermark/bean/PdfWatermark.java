@@ -25,6 +25,11 @@ public class PdfWatermark {
         this.wordsMarks = wordsMarks;
     }
 
+    public PdfWatermark(List<WordWatermark> wordsMarks, List<ImgWatermark> imgMarks) {
+        this.wordsMarks = wordsMarks;
+        this.imgMarks = imgMarks;
+    }
+
     public List<WordWatermark> getWordsMarks() {
         return wordsMarks;
     }

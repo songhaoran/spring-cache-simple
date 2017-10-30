@@ -13,10 +13,12 @@ public class WaterMark implements Serializable {
     private Integer pageNum;
     /**
      * 水印横坐标
+     * 注:为空时,取中间位置
      */
     private Float x;
     /**
      * 水印纵坐标
+     * 注:为空时,取中间位置
      */
     private Float y;
     /**

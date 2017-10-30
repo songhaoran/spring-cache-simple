@@ -85,7 +85,7 @@ public class TransparentWatermark {
         float h = img.getHeight();
         // transparency
         PdfExtGState gs1 = new PdfExtGState();
-        gs1.setFillOpacity(0.3f);
+        gs1.setFillOpacity(0.1f);
         // properties
         PdfCanvas over;
         Rectangle pagesize;
