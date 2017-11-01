@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -221,5 +222,19 @@ public class PdfWaterMarkTest {
         File file1 = new File(file);
 
         System.out.println();
+    }
+
+
+    @Test
+    public void md5Test() throws Exception {
+        String mark = "15311158992_2015632";
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        String m1 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        String m2 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        String m3 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        System.out.println(m1);
+        System.out.println(m2);
+        System.out.println(m3);
     }
 }
