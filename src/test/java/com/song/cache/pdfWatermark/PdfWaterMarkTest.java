@@ -1,5 +1,6 @@
 package com.song.cache.pdfWatermark;
 
+import com.google.common.collect.Lists;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFont;
@@ -18,78 +19,69 @@ import com.itextpdf.layout.property.VerticalAlignment;
 import com.song.cache.pdfWatermark.bean.ImgWatermark;
 import com.song.cache.pdfWatermark.bean.PdfWatermark;
 import com.song.cache.pdfWatermark.bean.WordWatermark;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.PaddingScheme;
+import org.apache.commons.net.util.Base64;
 import org.junit.Test;
-import sun.net.www.protocol.https.HttpsURLConnectionImpl;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
-import javax.net.ssl.HttpsURLConnection;
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Song on 2017/10/30.
  */
+@Slf4j
 public class PdfWaterMarkTest {
     public static final String FONT = "STSongStd-Light";
     public static final String DEST = "E:\\new.pdf";
-    public static final String SRC = "https://doc.meixinglobal.com/docs/20170502/9ae1ea67-3e48-43ad-ba31-3dae7c5affe1.pdf";
-//    public static final String SRC = "E:\\阿里巴巴Java开发手册 - 副本.pdf";
+    public static final String SRC = "https://doc.meixinglobal.com/docs/20170725/5fc4e8bf-984b-409f-b3a9-189e72ebddcd.pdf";
+    //    public static final String SRC = "E:\\阿里巴巴Java开发手册 - 副本.pdf";
     public static final String IMG_URL = "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=634098145,264198475&fm=27&gp=0.jpg";
+
     @Test
     public void testWordWaterMark() throws Exception {
-        WordWatermark word_01 = new WordWatermark(FONT, "水印文字1-1", 1, 200f, 200f, 0.3f, 0f, 1);
-        WordWatermark word_02 = new WordWatermark(FONT, "水印文字1-2", 1, 200f, 300f, 0.6f, 30f, 1);
-        WordWatermark word_03 = new WordWatermark(FONT, "水印文字1-3", 1, 200f, 400f, 1.0f, 60f, 1);
-        WordWatermark word_04 = new WordWatermark(FONT, "水印文字3-1", 3, 200f, 200f, 0.3f, 0f, 1);
-        WordWatermark word_05 = new WordWatermark(FONT, "水印文字3-2", 3, 200f, 300f, 0.6f, 30f, 1);
-        WordWatermark word_06 = new WordWatermark(FONT, "水印文字3-3", 3, 200f, 400f, 1.0f, 60f, 1);
-        WordWatermark word_07 = new WordWatermark(FONT, "水印文字5-1", 5, 200f, 200f, 0.3f, 0f, 1);
-        WordWatermark word_08 = new WordWatermark(FONT, "水印文字5-2", 5, 200f, 300f, 0.6f, 30f, 1);
-        WordWatermark word_09 = new WordWatermark(FONT, "水印文字5-3", 5, 200f, 400f, 1.0f, 60f, 1);
-        WordWatermark word_10 = new WordWatermark(FONT, "水印文字5-4", 5, 200f, 200f, 1.0f, 30f, 1);
-        WordWatermark word_11 = new WordWatermark(FONT, "水印文字33-1", 33, 200f, 300f, 0.5f, 0f, 1);
+        ArrayList<WordWatermark> words = Lists.newArrayList(
+                new WordWatermark(FONT, "水印文字1-1", null, 200f, 200f, 0.3f, 0f, 1),
+                new WordWatermark(FONT, "水印文字1-2", 1, 200f, 300f, 0.6f, 30f, 1),
+                new WordWatermark(FONT, "水印文字1-3", 1, 200f, 400f, 1.0f, 60f, 1),
+                new WordWatermark(FONT, "水印文字3-1", 3, 200f, 200f, 0.3f, 0f, 1),
+                new WordWatermark(FONT, "水印文字3-2", 3, 200f, 300f, 0.6f, 30f, 1),
+                new WordWatermark(FONT, "水印文字3-3", 3, 200f, 400f, 1.0f, 60f, 1),
+                new WordWatermark(FONT, "水印文字5-1", 5, 200f, 200f, 0.3f, 0f, 1),
+                new WordWatermark(FONT, "水印文字5-2", 5, 200f, 300f, 0.6f, 30f, 1),
+                new WordWatermark(FONT, "水印文字5-3", 5, 200f, 400f, 1.0f, 60f, 1),
+                new WordWatermark(FONT, "水印文字5-4", 5, 200f, 200f, 1.0f, 30f, 1),
+                new WordWatermark(FONT, "水印文字33-1", 33, 200f, 300f, 0.5f, 0f, 1));
 
-        List<WordWatermark> words = new ArrayList<>();
-        words.add(word_01);
-        words.add(word_02);
-        words.add(word_03);
-        words.add(word_04);
-        words.add(word_05);
-        words.add(word_06);
-        words.add(word_07);
-        words.add(word_08);
-        words.add(word_09);
-        words.add(word_10);
-        words.add(word_11);
+        ArrayList<ImgWatermark> imgs = Lists.newArrayList(
+                new ImgWatermark(2, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL),
+                new ImgWatermark(2, 100f, 500f, 0.2f, 0.2f, 1, IMG_URL),
+                new ImgWatermark(4, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL),
+                new ImgWatermark(6, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL));
 
-        ImgWatermark img_01 = new ImgWatermark(2, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL);
-        ImgWatermark img_02 = new ImgWatermark(2, 100f, 500f, 0.2f, 0.2f, 1, IMG_URL);
-        ImgWatermark img_03 = new ImgWatermark(4, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL);
-        ImgWatermark img_04 = new ImgWatermark(6, 100f, 200f, 0.2f, 0.2f, 1, IMG_URL);
 
-        List<ImgWatermark> imgs = new ArrayList<>();
-        imgs.add(img_01);
-        imgs.add(img_02);
-        imgs.add(img_03);
-        imgs.add(img_04);
-
-        PdfWatermark pdfWatermark = new PdfWatermark(words,imgs);
-        setWaterMark(pdfWatermark);
-
+        PdfWatermark pdfWatermark = new PdfWatermark(words, imgs);
+        setWaterMark(pdfWatermark, SRC);
     }
 
-    public boolean setWaterMark(PdfWatermark pdfWatermark) throws Exception {
+    public boolean setWaterMark(PdfWatermark pdfWatermark, String src) throws Exception {
+        if (StringUtils.isBlank(src) || !src.startsWith("http") || !src.endsWith(".pdf"))
+            return false;
         if (pdfWatermark == null
                 || ((pdfWatermark.getWordsMarks() == null || pdfWatermark.getWordsMarks().size() < 1) && (pdfWatermark.getImgMarks() == null || pdfWatermark.getImgMarks().size() < 1)))
             return false;
-        URL url = new URL(SRC);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        URL url = new URL(src);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //设置超时间为3秒
-        conn.setConnectTimeout(3*1000);
+        conn.setConnectTimeout(3 * 1000);
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         //得到输入流
@@ -192,5 +184,57 @@ public class PdfWaterMarkTest {
         }
         document.close();
         return true;
+    }
+
+    @Test
+    public void checkFileExist() {
+        try {
+            //设置此类是否应该自动执行 HTTP 重定向（响应代码为 3xx 的请求）。
+            HttpURLConnection.setFollowRedirects(false);
+            //到 URL 所引用的远程对象的连接
+            HttpURLConnection con = (HttpURLConnection) new URL("https://doc.meixinglobal.com/docs/20170502/9ae1ea67-3e48-43ad-bae7c5affe1.pdf")
+                    .openConnection();
+
+            con.setRequestMethod("HEAD");
+            //从 HTTP 响应消息获取状态码
+            boolean b = con.getResponseCode() == HttpURLConnection.HTTP_OK;
+            System.out.println();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    @Test
+    public void getDescFilePath() throws Exception{
+        byte[] bytes1 = "meixin_2010726_15311158992_end".getBytes();
+        String s1 = new BASE64Encoder().encodeBuffer(bytes1);
+//        String s = new String((new BASE64Decoder()).decodeBuffer(s1));
+
+        String s = SRC.substring(SRC.lastIndexOf("/") + 1, SRC.lastIndexOf(".pdf"));
+        String suffix = SRC.replace(s, s1);
+        System.out.println();
+    }
+
+    @Test
+    public void file() {
+        String file = "E:\\20171031\\5e4f37b2-71c4-4ed3-9e17-3dff1a8aa5ed.pdf";
+        File file1 = new File(file);
+
+        System.out.println();
+    }
+
+
+    @Test
+    public void md5Test() throws Exception {
+        String mark = "15311158992_2015632";
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        String m1 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        String m2 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        String m3 = base64Encoder.encode(md5.digest(mark.getBytes()));
+        System.out.println(m1);
+        System.out.println(m2);
+        System.out.println(m3);
     }
 }

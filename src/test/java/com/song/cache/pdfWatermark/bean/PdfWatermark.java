@@ -1,12 +1,14 @@
 package com.song.cache.pdfWatermark.bean;
 
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  * Created by song on 2017/10/30.
  */
-
+@Data
 public class PdfWatermark {
 
     /**
@@ -18,31 +20,10 @@ public class PdfWatermark {
      */
     private List<ImgWatermark> imgMarks;
 
-    public PdfWatermark() {
-    }
-
-    public PdfWatermark(List<WordWatermark> wordsMarks) {
-        this.wordsMarks = wordsMarks;
-    }
+    public PdfWatermark() {}
 
     public PdfWatermark(List<WordWatermark> wordsMarks, List<ImgWatermark> imgMarks) {
         this.wordsMarks = wordsMarks;
-        this.imgMarks = imgMarks;
-    }
-
-    public List<WordWatermark> getWordsMarks() {
-        return wordsMarks;
-    }
-
-    public void setWordsMarks(List<WordWatermark> wordsMarks) {
-        this.wordsMarks = wordsMarks;
-    }
-
-    public List<ImgWatermark> getImgMarks() {
-        return imgMarks;
-    }
-
-    public void setImgMarks(List<ImgWatermark> imgMarks) {
         this.imgMarks = imgMarks;
     }
 }
