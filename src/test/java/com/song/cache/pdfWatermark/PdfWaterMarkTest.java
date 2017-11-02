@@ -206,7 +206,7 @@ public class PdfWaterMarkTest {
     }
 
     @Test
-    public void getDescFilePath() throws Exception{
+    public void getDescFilePath() throws Exception {
         byte[] bytes1 = "meixin_2010726_15311158992_end".getBytes();
         String s1 = new BASE64Encoder().encodeBuffer(bytes1);
 //        String s = new String((new BASE64Decoder()).decodeBuffer(s1));
@@ -237,4 +237,24 @@ public class PdfWaterMarkTest {
         System.out.println(m2);
         System.out.println(m3);
     }
+
+    @Test
+    public void testCheckChar() throws Exception {
+        String s1 = "sssdd我sss";
+        char[] chars = s1.toCharArray();
+        for (char c : chars) {
+            System.out.println(c + ":" + (ifChineseChar(c) == true ? "True" : "False"));
+        }
+    }
+
+    public boolean ifChineseChar(char c) {
+        if (c == 0)
+            return false;
+        Character.UnicodeScript script = Character.UnicodeScript.of(c);
+        if (script == Character.UnicodeScript.HAN)
+            return true;
+        return false;
+    }
+
+
 }
