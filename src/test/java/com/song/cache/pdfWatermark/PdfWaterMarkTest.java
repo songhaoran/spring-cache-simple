@@ -20,6 +20,10 @@ import com.song.cache.pdfWatermark.bean.ImgWatermark;
 import com.song.cache.pdfWatermark.bean.PdfWatermark;
 import com.song.cache.pdfWatermark.bean.WordWatermark;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.Base64;
 import org.junit.Test;
@@ -34,6 +38,8 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Song on 2017/10/30.
@@ -240,11 +246,12 @@ public class PdfWaterMarkTest {
 
     @Test
     public void testCheckChar() throws Exception {
-        String s1 = "sssdd我sss";
-        char[] chars = s1.toCharArray();
+        String s1 = "Meixin Global宋125sldifjlsdf文";
+        /*char[] chars = s1.toCharArray();
         for (char c : chars) {
             System.out.println(c + ":" + (ifChineseChar(c) == true ? "True" : "False"));
-        }
+        }*/
+        System.out.println(convert2Pinyin(s1));
     }
 
     public boolean ifChineseChar(char c) {
@@ -256,5 +263,57 @@ public class PdfWaterMarkTest {
         return false;
     }
 
+    public String convert2Pinyin(String str) throws Exception {
+        if (StringUtils.isBlank(str))
+            return str;
+        HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+        defaultFormat.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+        StringBuilder builder = new StringBuilder();
+        char[] chars = str.toCharArray();
+        boolean ifLastCharIsChinese = false;
+        for (int i = 0; i < chars.length; i++) {
+            if (ifChineseChar(chars[i])) {
+                if (!ifLastCharIsChinese)//中文前后需要有空格间隔
+                    builder.append(" ");
+                String[] pinyinChars = PinyinHelper.toHanyuPinyinStringArray(chars[i], defaultFormat);
+                char firstLetter = pinyinChars[0].charAt(0);
+                firstLetter -= 32;
+                String pinyin = pinyinChars[0].replaceFirst(String.valueOf(pinyinChars[0].charAt(0)), String.valueOf(firstLetter));
+                builder.append(pinyin + " ");
+                ifLastCharIsChinese = true;
+            } else {
+                builder.append(chars[i]);
+                ifLastCharIsChinese = false;
+            }
+        }
+        return builder.toString().trim();
+    }
 
+    /**
+     * 判断字符串是否包含中文
+     *
+     * @param str
+     * @return
+     */
+    public boolean ifContainChinese(String str) {
+        if (StringUtils.isBlank(str))
+            return false;
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(str);
+        if (m.find())
+            return true;
+        return false;
+
+    }
+
+    @Test
+    public void testIfContainChinese() {
+        String s = "我andndndldgaj";
+        String s1 = "andndndldgaj";
+        String s2 = "andndnd1231231256778&^*(&()#E(ldgaj";
+        System.out.println(ifContainChinese(s));
+        System.out.println(ifContainChinese(s1));
+        System.out.println(ifContainChinese(s2));
+    }
 }
